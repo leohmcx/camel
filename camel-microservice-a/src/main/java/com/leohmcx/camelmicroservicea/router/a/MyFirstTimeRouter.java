@@ -2,6 +2,8 @@ package com.leohmcx.camelmicroservicea.router.a;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +31,17 @@ public class MyFirstTimeRouter extends RouteBuilder {
                 .log("${body}")
                 .bean(simpleLogBean, "getSimpleLog") // processing
                 .log("${body}")
+                .process(new SimpleLoggingProcess())
                 .to("log:first-timer"); // database
+    }
+}
+
+@Slf4j
+class SimpleLoggingProcess implements Processor {
+
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        log.info("SimpleLoggingProcess: {}", exchange);
     }
 }
 
