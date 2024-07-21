@@ -1,11 +1,8 @@
-package com.leohmcx.camelmicroserviceb.router.c;
+package com.leohmcx.camelmicroserviceb.router;
 
-import lombok.RequiredArgsConstructor;
 import org.apache.camel.builder.RouteBuilder;
-import org.springframework.stereotype.Component;
 
-@Component
-@RequiredArgsConstructor
+//@Component
 public class KafkaReceiverRouter extends RouteBuilder {
 
     @Override

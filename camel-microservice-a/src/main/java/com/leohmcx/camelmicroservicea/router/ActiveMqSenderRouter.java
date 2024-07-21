@@ -1,4 +1,4 @@
-package com.leohmcx.camelmicroservicea.router.c;
+package com.leohmcx.camelmicroservicea.router;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;

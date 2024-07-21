@@ -1,4 +1,4 @@
-package com.leohmcx.camelmicroservicea.router.a;
+package com.leohmcx.camelmicroservicea.router;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
