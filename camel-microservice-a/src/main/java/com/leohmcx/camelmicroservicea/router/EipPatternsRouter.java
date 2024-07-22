@@ -1,10 +1,15 @@
 package com.leohmcx.camelmicroservicea.router;
 
+import com.leohmcx.camelmicroservicea.bean.SplitterComponent;
+import lombok.RequiredArgsConstructor;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class EipPatternsRouter extends RouteBuilder {
+
+    private final SplitterComponent splitterComponent;
 
     @Override
     public void configure() throws Exception {
@@ -24,9 +29,16 @@ public class EipPatternsRouter extends RouteBuilder {
           Unmarshal: Transforms data in some binary or textual format (such as received over the network) into a Java
           object; or some other representation according to the data format being used.
          */
+//        from("file:files/csv")
+//                .unmarshal().csv()
+//                .split(body())
+                //.to("log:split-files");
+//                .to("activemq:split-queue");
+
         from("file:files/csv")
-                .unmarshal().csv()
-                .split(body())
+                .convertBodyTo(String.class)
+                .split(method(splitterComponent, "split"))
+                //.split(body(), ",")
                 //.to("log:split-files");
                 .to("activemq:split-queue");
     }
