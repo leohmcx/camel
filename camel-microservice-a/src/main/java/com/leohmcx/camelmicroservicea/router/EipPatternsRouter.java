@@ -1,8 +1,11 @@
 package com.leohmcx.camelmicroservicea.router;
 
+import com.leohmcx.camelmicroservicea.bean.ArrayListAggregationStrategy;
 import com.leohmcx.camelmicroservicea.bean.SplitterComponent;
+import com.leohmcx.camelmicroservicea.domain.CurrencyExchange;
 import lombok.RequiredArgsConstructor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.dataformat.JsonLibrary;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -10,6 +13,7 @@ import org.springframework.stereotype.Component;
 public class EipPatternsRouter extends RouteBuilder {
 
     private final SplitterComponent splitterComponent;
+    private final ArrayListAggregationStrategy arrayListAggregationStrategy;
 
     @Override
     public void configure() throws Exception {
@@ -35,11 +39,23 @@ public class EipPatternsRouter extends RouteBuilder {
                 //.to("log:split-files");
 //                .to("activemq:split-queue");
 
-        from("file:files/csv")
-                .convertBodyTo(String.class)
-                .split(method(splitterComponent, "split"))
+//        from("file:files/csv")
+//                .convertBodyTo(String.class)
+//                .split(method(splitterComponent, "split"))
                 //.split(body(), ",")
                 //.to("log:split-files");
-                .to("activemq:split-queue");
+//                .to("activemq:split-queue");
+
+        /**
+         * Aggregation
+         * Messages -> Aggregate -> Endpoint
+         * to, 3
+         */
+        from("file:files/aggregate-json")
+                .unmarshal().json(JsonLibrary.Jackson, CurrencyExchange.class)
+                .aggregate(simple("${body.to}"), arrayListAggregationStrategy)
+                .completionSize(3)
+                //.completionTimeout(HIGHEST)
+                .to("log:aggregate-json");
     }
 }
