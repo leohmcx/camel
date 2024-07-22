@@ -51,11 +51,30 @@ public class EipPatternsRouter extends RouteBuilder {
          * Messages -> Aggregate -> Endpoint
          * to, 3
          */
-        from("file:files/aggregate-json")
-                .unmarshal().json(JsonLibrary.Jackson, CurrencyExchange.class)
-                .aggregate(simple("${body.to}"), arrayListAggregationStrategy)
-                .completionSize(3)
+//        from("file:files/aggregate-json")
+//                .unmarshal().json(JsonLibrary.Jackson, CurrencyExchange.class)
+//                .aggregate(simple("${body.to}"), arrayListAggregationStrategy)
+//                .completionSize(3)
                 //.completionTimeout(HIGHEST)
-                .to("log:aggregate-json");
+//                .to("log:aggregate-json");
+
+        /**
+         * Routing slip
+         */
+        final var routingSlip = "direct:endpoint1,direct:endpoint2";
+        //final var routingSlip = "direct:endpoint1,direct:endpoint2,direct:endpoint3";
+
+        from("timer:routingSlip?period=10000")
+                .transform().constant("My message is hardcoded")
+                .routingSlip(simple(routingSlip));
+
+        from("direct:endpoint1")
+                .to("log:directEndpoint1");
+
+        from("direct:endpoint2")
+                .to("log:directEndpoint2");
+
+        from("direct:endpoint3")
+                .to("log:directEndpoint3");
     }
 }
